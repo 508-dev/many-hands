@@ -15,7 +15,10 @@ dashboard, and static SPA on port 8090. The production address is
    SQLite database and uploaded files; do not store it only in the container.
 6. Configure the application domain as `manyhands.508.dev` and let Coolify's
    proxy handle TLS.
-7. Coolify application UUID: **TODO**. Coolify environment/project UUID: **TODO**.
+7. Coolify project **Many Hands** `zq0w45wuwjaj3kttropysnck`, application
+   `many-hands` `hrdpi4qp6m2wymjy9uhns9ba` (environment `production`, server
+   Prod1), persistent storage `vfgwxb0yxjhhbarbutlfun4u` at `/pb/pb_data`.
+   Coolify also sends `X-Robots-Tag: noindex` for the domain (`noindex_domains`).
 
 The multi-stage Dockerfile builds `apps/web` with Bun, downloads and
 checksum-verifies PocketBase 0.40.6, and copies migrations, hooks, and static
@@ -45,10 +48,22 @@ and must never be baked into the image.
 
 ## Automatic deploys
 
-Configure a GitHub webhook for the Coolify application so each push to `main`
-triggers a deployment. The webhook URL and application UUID are **TODO** until
-the Coolify application exists. Pull requests are checked by GitHub Actions;
-only pushes to `main` deploy.
+Each push to `main` deploys. A GitHub webhook on the repository (id
+`711368483`, push events only) posts to Coolify's manual-webhook endpoint
+`https://coolify.508.dev/webhooks/source/github/events/manual`, signed with the
+secret stored on the application as `manual_webhook_secret_github` (operators
+keep a copy as `GITHUB_WEBHOOK_SECRET` in the gitignored `.env`). Pushes to
+other branches are ignored. Pull requests are checked by GitHub Actions, but
+deploys are not gated on CI.
+
+Operate the app from Coolify's API with the token in `.env`:
+
+```bash
+eval "$(grep -E '^COOLIFY_' .env | sed 's/^/export /; s/=\(.*\)$/="\1"/')"
+api() { curl -sS -H "Authorization: Bearer $COOLIFY_API_TOKEN" "$COOLIFY_URL/api/v1$@"; }
+api "/deployments/applications/$COOLIFY_APP_UUID" | jq '.deployments[:3]'   # recent deploys
+api "/deploy?uuid=$COOLIFY_APP_UUID" -X POST                                # redeploy
+```
 
 ## Data and backups
 

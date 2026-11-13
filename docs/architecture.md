@@ -241,8 +241,9 @@ SELECT u.id AS id,
 FROM users u
 ```
 
-list/view rule: `""`. If PocketBase cannot infer types for this view, simplify it
-and document what changed; the UI can fall back to counting `thanks`.
+list/view rule: `""`. As built, the view uses `LEFT JOIN` + `GROUP BY` instead of
+scalar subqueries, because PocketBase 0.40.6 infers scalar-subquery columns as
+`json` rather than `number`; the counts are identical.
 
 ### reports
 
@@ -272,7 +273,10 @@ list/view/update/delete null (superusers moderate in the dashboard).
 - `trustedProxy.headers = ["X-Forwarded-For"]`, `useLeftmostIP = false`: Traefik
   appends the real client IP last, and `manyhands.508.dev` is not behind Cloudflare.
 - Rate limits **enabled**: keep PocketBase's default rules, and add a stricter
-  `users:create` limit for guests (sign-ups), e.g. 5 per 10 minutes per IP.
+  `users:create` limit for guests (sign-ups), 5 per 10 minutes per IP.
+  `127.0.0.1` is excluded so the in-container health check and the local smoke
+  test are never throttled; real clients arrive through Traefik with their own
+  IP in `X-Forwarded-For`.
 
 ## 4. Smoke test (required for any backend change)
 
@@ -306,7 +310,11 @@ up. Assertions must cover, at minimum:
   component styles. Runtime dependencies are limited to `pocketbase`,
   `@fontsource/caveat` and `@fontsource/atkinson-hyperlegible` unless the
   orchestrator agrees otherwise.
-- Every user-facing string comes from `src/lib/copy.ts`.
+- Every user-facing string comes from `src/lib/copy.ts` or a per-area module in
+  `src/lib/copy/` (`account.ts`, `directory.ts`, `needs.ts`, `requests.ts`), so a
+  translation touches only those files.
+- `pb.autoCancellation(false)` is set in `pb.ts`: pages load several lists from
+  the same collection at once, which the SDK would otherwise cancel.
 - Mobile first: everything must work at 360 px wide. Bottom tab bar on phones
   (Skills, Needs, Requests with badge, Me), top bar on wider screens.
 - Accessibility: WCAG 2.2 AA contrast; real `<button>`/`<a>`; every input has a
