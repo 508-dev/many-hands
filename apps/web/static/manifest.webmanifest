@@ -1,0 +1,27 @@
+{
+  "name": "Many Hands",
+  "short_name": "Many Hands",
+  "description": "Skill sharing, with no money involved.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#b23a26",
+  "background_color": "#fffaf0",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

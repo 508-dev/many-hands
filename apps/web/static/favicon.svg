@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Many Hands pinned card</title>
+  <rect width="512" height="512" rx="96" fill="#b98b5e"/>
+  <g opacity=".18" fill="#654321">
+    <circle cx="56" cy="82" r="3"/><circle cx="441" cy="74" r="4"/><circle cx="63" cy="429" r="4"/>
+    <circle cx="454" cy="397" r="3"/><circle cx="92" cy="259" r="2"/><circle cx="423" cy="252" r="3"/>
+  </g>
+  <g transform="rotate(-4 256 268)">
+    <rect x="111" y="101" width="290" height="326" rx="5" fill="#49321e" opacity=".22" transform="translate(7 10)"/>
+    <rect x="111" y="101" width="290" height="326" rx="5" fill="#fffaf0" stroke="#e7d5bb" stroke-width="3"/>
+    <path d="M128 181H384" stroke="#b23a26" stroke-width="5" opacity=".65"/>
+    <g stroke="#7fa5bb" stroke-width="3" opacity=".28">
+      <path d="M128 234H384M128 277H384M128 320H384M128 363H384"/>
+    </g>
+    <path d="M169 285c25-38 51-41 66-17l14 23 12-52c4-18 28-15 27 4l-3 53 16-37c8-18 30-8 25 10l-13 49 13-16c12-15 31 1 20 17-23 34-43 57-78 58-41 1-65-23-86-52-12-16-7-29 5-40z" fill="#b23a26"/>
+    <circle cx="256" cy="132" r="34" fill="#6f2015" opacity=".25" transform="translate(3 6)"/>
+    <radialGradient id="pin" cx="32%" cy="25%" r="75%">
+      <stop offset="0" stop-color="#e68b70"/>
+      <stop offset=".45" stop-color="#b23a26"/>
+      <stop offset="1" stop-color="#752114"/>
+    </radialGradient>
+    <circle cx="256" cy="132" r="34" fill="url(#pin)" stroke="#762416" stroke-width="3"/>
+    <circle cx="245" cy="120" r="7" fill="#fff" opacity=".6"/>
+  </g>
+</svg>
