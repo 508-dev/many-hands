@@ -3,6 +3,7 @@
   import { page } from "$app/state";
   import ContactForm from "$lib/components/account/ContactForm.svelte";
   import DeleteAccount from "$lib/components/account/DeleteAccount.svelte";
+  import MatchingNeeds from "$lib/components/account/MatchingNeeds.svelte";
   import ProfileForm from "$lib/components/account/ProfileForm.svelte";
   import SkillsManager from "$lib/components/account/SkillsManager.svelte";
   import { auth } from "$lib/auth.svelte";
@@ -118,6 +119,7 @@
           <ProfileForm {user} />
           <ContactForm userId={user.id} {contact} />
           <SkillsManager userId={user.id} initialSkills={skills} />
+          <MatchingNeeds {user} {skills} />
 
           <section class="paper-panel account-section" aria-labelledby="my-needs-title">
             <div class="needs-heading">

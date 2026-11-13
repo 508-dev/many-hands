@@ -38,6 +38,7 @@ body {
     23px 29px,
     100% 100%;
   color: var(--ink);
+  padding-bottom: calc(4.4rem + env(safe-area-inset-bottom));
   font-size: 17px;
   line-height: 1.5;
 }
@@ -201,7 +202,6 @@ main {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 0.5rem 1rem;
-  margin-bottom: 4.4rem;
   padding: 1rem max(1rem, calc((100vw - 1120px) / 2));
   border-top: 1px solid rgb(76 52 30 / 18%);
   background: var(--paper);
@@ -223,8 +223,8 @@ main {
     padding-block: 2.5rem 4rem;
   }
 
-  .site-footer {
-    margin-bottom: 0;
+  body {
+    padding-bottom: 0;
   }
 }
 
