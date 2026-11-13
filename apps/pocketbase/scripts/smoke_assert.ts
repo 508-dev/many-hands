@@ -8,9 +8,15 @@
 //
 // Requires: bun. No external dependencies (fetch only).
 
-const PB_URL = process.env.PB_URL!;
-const SUPERUSER_EMAIL = process.env.PB_SUPERUSER_EMAIL!;
-const SUPERUSER_PASSWORD = process.env.PB_SUPERUSER_PASSWORD!;
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`missing env ${name}`);
+  return value;
+}
+
+const PB_URL = requireEnv("PB_URL");
+const SUPERUSER_EMAIL = requireEnv("PB_SUPERUSER_EMAIL");
+const SUPERUSER_PASSWORD = requireEnv("PB_SUPERUSER_PASSWORD");
 
 let failures = 0;
 
@@ -270,7 +276,7 @@ async function main() {
   // -------------------------------------------------------------------------
   console.log("\n[contacts]");
   let aliceContact: any;
-  let bobContact: any;
+  let _bobContact: any;
   {
     const a = await req("POST", "/api/collections/contacts/records", {
       token: aliceTok,
@@ -284,7 +290,7 @@ async function main() {
       json: { user: bob.id, method: "phone", value: "+15551234", note: "" },
     });
     check(b.ok && !!b.data?.id, "bob creates his contact");
-    bobContact = b.data;
+    _bobContact = b.data;
 
     // Forging a contact for someone else is rejected.
     const forge = await req("POST", "/api/collections/contacts/records", {
@@ -713,7 +719,7 @@ async function main() {
   // 10. Thanks
   // -------------------------------------------------------------------------
   console.log("\n[thanks]");
-  let thanksRecord: any;
+  let _thanksRecord: any;
   {
     // Seeker of a done request thanks its helper.
     const t = await req("POST", "/api/collections/thanks/records", {
@@ -721,7 +727,7 @@ async function main() {
       json: { request: req1.id, author: alice.id, helper: bob.id, message: "Bob was great!" },
     });
     check(t.ok && !!t.data?.id, "seeker of a done request can thank the helper");
-    thanksRecord = t.data;
+    _thanksRecord = t.data;
 
     // The helper (not the seeker) cannot thank.
     const byHelper = await req("POST", "/api/collections/thanks/records", {
