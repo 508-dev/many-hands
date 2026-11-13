@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ReportButton from "$lib/components/ReportButton.svelte";
   import { directory } from "$lib/copy/directory";
   import { timeAgo } from "$lib/time";
   import type { ThankYou } from "$lib/types";
@@ -12,7 +13,10 @@
   <ul class="notes">
     {#each thanks as note (note.id)}
       <li class="note">
-        <p class="author">{directory.thanks.byline(note.expand?.author?.name ?? "")}</p>
+        <div class="note-head">
+          <p class="author">{directory.thanks.byline(note.expand?.author?.name ?? "")}</p>
+          <ReportButton targetType="thanks" targetId={note.id} targetUser={note.author} />
+        </div>
         <p class="message">{note.message}</p>
         <p class="when"><time datetime={note.created}>{timeAgo(note.created)}</time></p>
       </li>
@@ -52,6 +56,17 @@
     margin: 0 0 0.35rem;
     color: var(--brick-dark);
     font-weight: 700;
+  }
+
+  .note-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .note-head .author {
+    margin: 0;
   }
 
   .message {

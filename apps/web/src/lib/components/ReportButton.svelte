@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/state";
   import { auth } from "$lib/auth.svelte";
   import { directory } from "$lib/copy/directory";
   import { collection } from "$lib/pb";
@@ -113,10 +112,6 @@
       </form>
     {/if}
   </Modal>
-{:else}
-  <a class="report-button report-link" href={`/login?redirect=${encodeURIComponent(page.url.pathname + page.url.search)}`}>
-    {directory.report.loginPrompt}
-  </a>
 {/if}
 
 <style>
@@ -132,7 +127,6 @@
     font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
-    text-decoration: none;
   }
 
   .report-button:hover {
