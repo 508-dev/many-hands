@@ -11,10 +11,12 @@
 
   let { children }: { children: Snippet } = $props();
 
+  // Depend on the id only, so saving a profile doesn't restart the subscription.
+  const userId = $derived(auth.user?.id ?? null);
+
   $effect(() => {
-    const user = auth.user;
-    if (user) {
-      void unreadRequests.start(user.id);
+    if (userId) {
+      void unreadRequests.start(userId);
       return () => unreadRequests.stop();
     }
     unreadRequests.stop();
@@ -33,4 +35,5 @@
 <footer class="site-footer">
   <a href="/safety">{copy.nav.safety}</a>
   <span>{copy.footer.moneyFree}</span>
+  <a href="https://github.com/508-dev/many-hands" rel="noopener">{copy.footer.source}</a>
 </footer>
