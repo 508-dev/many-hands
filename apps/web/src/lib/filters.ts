@@ -1,7 +1,7 @@
 import { type CategorySlug, categories } from "$lib/categories";
 import { boundingBox, haversineKm, type Place } from "$lib/geo";
 import { pb } from "$lib/pb";
-import type { Skill } from "$lib/types";
+import type { Mode, Need, Skill } from "$lib/types";
 
 export type CategoryFilter = CategorySlug | "all";
 
@@ -85,6 +85,20 @@ export function skillFiltersToParams(filters: SkillFilters): URLSearchParams {
 
 /** Build the PocketBase list filter for a set of skill filters. */
 export function buildSkillListFilter(filters: SkillFilters): string {
+  return buildListFilter(filters, ["title", "description"], "user.lat", "user.lng");
+}
+
+/** Build the PocketBase list filter for a set of need filters (need's own coordinates). */
+export function buildNeedListFilter(filters: SkillFilters): string {
+  return buildListFilter(filters, ["title", "details"], "lat", "lng");
+}
+
+function buildListFilter(
+  filters: SkillFilters,
+  searchFields: string[],
+  geoLat: string,
+  geoLng: string,
+): string {
   const parts: string[] = [];
 
   if (filters.category !== "all") {
@@ -94,7 +108,7 @@ export function buildSkillListFilter(filters: SkillFilters): string {
   const q = filters.q.trim();
   if (q) {
     parts.push(
-      `(${pb.filter("title ~ {:q}", { q })} || ${pb.filter("description ~ {:q}", { q })})`,
+      `(${searchFields.map((field) => pb.filter(`${field} ~ {:q}`, { q })).join(" || ")})`,
     );
   }
 
@@ -102,11 +116,11 @@ export function buildSkillListFilter(filters: SkillFilters): string {
   if (km != null && place?.lat != null && place?.lng != null) {
     const box = boundingBox(place.lat, place.lng, km);
     const bbox = pb.filter(
-      "user.lat >= {:minLat} && user.lat <= {:maxLat} && user.lng >= {:minLng} && user.lng <= {:maxLng}",
+      `${geoLat} >= {:minLat} && ${geoLat} <= {:maxLat} && ${geoLng} >= {:minLng} && ${geoLng} <= {:maxLng}`,
       { minLat: box.minLat, maxLat: box.maxLat, minLng: box.minLng, maxLng: box.maxLng },
     );
     // With remote-friendly included, anything that isn't strictly in-person
-    // passes regardless of distance; otherwise only nearby in-person skills.
+    // passes regardless of distance; otherwise only non-remote items.
     parts.push(
       filters.includeRemote ? `(${bbox} || mode != "in_person")` : `(${bbox} && mode != "remote")`,
     );
@@ -115,7 +129,34 @@ export function buildSkillListFilter(filters: SkillFilters): string {
   return parts.join(" && ");
 }
 
+/**
+ * Filter for the "N members list this category nearby" hint on a need: skills
+ * in the same category whose owner is within `km` of the need's coordinates,
+ * plus remote-friendly skills (anywhere). When the need has no coordinates,
+ * only remote-friendly skills in the category match.
+ */
+export function buildNeedMatchFilter(
+  category: CategorySlug,
+  lat: number | null,
+  lng: number | null,
+  km: number,
+): string {
+  const parts = [pb.filter("category = {:category}", { category })];
+  if (lat != null && lng != null) {
+    const box = boundingBox(lat, lng, km);
+    const bbox = pb.filter(
+      "user.lat >= {:minLat} && user.lat <= {:maxLat} && user.lng >= {:minLng} && user.lng <= {:maxLng}",
+      { minLat: box.minLat, maxLat: box.maxLat, minLng: box.minLng, maxLng: box.maxLng },
+    );
+    parts.push(`(${bbox} || mode != "in_person")`);
+  } else {
+    parts.push('mode != "in_person"');
+  }
+  return parts.join(" && ");
+}
+
 export type LocatedSkill = Skill & { km: number | null };
+export type LocatedNeed = Need & { km: number | null };
 
 /**
  * Attach an exact distance to each skill (relative to the active location) and
@@ -123,18 +164,36 @@ export type LocatedSkill = Skill & { km: number | null };
  * set the input order (newest first) is preserved.
  */
 export function withDistances(skills: Skill[], location: LocationFilter): LocatedSkill[] {
+  return attachDistances(skills, location, (skill) => {
+    const user = skill.expand?.user;
+    return user && user.lat != null && user.lng != null ? { lat: user.lat, lng: user.lng } : null;
+  });
+}
+
+/** Same as {@link withDistances}, but for needs (their own lat/lng). */
+export function withNeedDistances(needs: Need[], location: LocationFilter): LocatedNeed[] {
+  return attachDistances(needs, location, (need) =>
+    need.lat != null && need.lng != null ? { lat: need.lat, lng: need.lng } : null,
+  );
+}
+
+function attachDistances<T extends { mode: Mode; created: string }>(
+  items: T[],
+  location: LocationFilter,
+  coords: (item: T) => { lat: number; lng: number } | null,
+): Array<T & { km: number | null }> {
   const center =
     location.km != null && location.place?.lat != null && location.place?.lng != null
       ? { lat: location.place.lat, lng: location.place.lng }
       : null;
 
-  const located: LocatedSkill[] = skills.map((skill) => {
-    const user = skill.expand?.user;
+  const located = items.map((item) => {
     let km: number | null = null;
-    if (center && user && user.lat != null && user.lng != null) {
-      km = haversineKm(center, { lat: user.lat, lng: user.lng });
+    if (center) {
+      const point = coords(item);
+      if (point) km = haversineKm(center, point);
     }
-    return { ...skill, km };
+    return { ...item, km };
   });
 
   if (!center) return located;

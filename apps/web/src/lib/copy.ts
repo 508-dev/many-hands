@@ -18,6 +18,7 @@ export const copy = {
   },
   footer: {
     moneyFree: "Neighbours helping neighbours. No money involved.",
+    source: "Source code (AGPL-3.0)",
   },
   landing: {
     eyebrow: "A neighbourhood skill-sharing board",

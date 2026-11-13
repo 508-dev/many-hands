@@ -14,9 +14,10 @@
   type Props = {
     skill: Skill;
     km?: number | null;
+    hidePerson?: boolean;
   };
 
-  let { skill, km = null }: Props = $props();
+  let { skill, km = null, hidePerson = false }: Props = $props();
 
   const category = $derived(getCategory(skill.category));
   const user = $derived(skill.expand?.user);
@@ -44,7 +45,7 @@
 
   <p class="mode-badge">{directory.mode[skill.mode]}</p>
 
-  {#if user}
+  {#if user && !hidePerson}
     <div class="person-row">
       <Avatar name={user.name} id={user.id} src={avatarUrl} size="small" />
       <div class="person-meta">
