@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.context/
+.claude/
+node_modules/
+dist/
+build/
+.svelte-kit/
+*.log
+# Local PocketBase binary and data (never commit data)
+.bin/
+pb_data/
+.pb_data*/
+apps/pocketbase/pb_data/
