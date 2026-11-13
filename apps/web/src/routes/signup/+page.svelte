@@ -1,6 +1,9 @@
 <script lang="ts">
-  import ComingSoon from "$lib/components/ComingSoon.svelte";
+  import AuthForm from "$lib/components/account/AuthForm.svelte";
   import { copy } from "$lib/copy";
+  import { accountCopy } from "$lib/copy/account";
 </script>
 
-<ComingSoon title={copy.stubs.signup} />
+<svelte:head><title>{accountCopy.signup.title} · {copy.siteName}</title></svelte:head>
+
+<AuthForm mode="signup" />
