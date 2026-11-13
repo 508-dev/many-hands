@@ -42,6 +42,10 @@
 
 <style>
   .chips {
+    /* Fieldsets default to min-width: min-content, which would let a
+       nowrap chip row push the page wider than the phone. */
+    min-width: 0;
+    max-width: 100%;
     margin: 0;
     padding: 0;
     border: 0;
@@ -61,6 +65,22 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+
+  /* Phones: one swipeable row instead of a wall of chips. */
+  @media (max-width: 640px) {
+    .chip-row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 0.35rem;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
   }
 
   .chip {

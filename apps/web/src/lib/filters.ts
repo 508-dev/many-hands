@@ -108,9 +108,7 @@ export function buildSkillListFilter(filters: SkillFilters): string {
     // With remote-friendly included, anything that isn't strictly in-person
     // passes regardless of distance; otherwise only nearby in-person skills.
     parts.push(
-      filters.includeRemote
-        ? `(${bbox} || mode != "in_person")`
-        : `(${bbox} && mode = "in_person")`,
+      filters.includeRemote ? `(${bbox} || mode != "in_person")` : `(${bbox} && mode != "remote")`,
     );
   }
 
