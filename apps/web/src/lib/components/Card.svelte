@@ -40,6 +40,7 @@
     position: relative;
     display: flex;
     min-width: 0;
+    height: 100%;
     flex-direction: column;
     gap: 0.75rem;
     padding: 1.7rem 1.25rem 1.25rem;

@@ -1,9 +1,14 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { auth } from "$lib/auth.svelte";
+  import Avatar from "$lib/components/Avatar.svelte";
   import { copy } from "$lib/copy";
+  import { pb } from "$lib/pb";
 
   let { requestsBadge = 0 }: { requestsBadge?: number } = $props();
+  const avatarUrl = $derived(
+    auth.user?.avatar ? pb.files.getURL(auth.user, auth.user.avatar, { thumb: "100x100" }) : undefined,
+  );
 
   const links = [
     { href: "/skills", label: copy.nav.skills },
@@ -25,8 +30,15 @@
   </a>
   <nav aria-label={copy.nav.primary}>
     {#each links as link (link.href)}
-      <a href={link.href} aria-current={current(link.href) ? "page" : undefined}>
-        {link.label}
+      <a
+        href={link.href}
+        class:profile-link={link.href === "/me" && auth.isLoggedIn}
+        aria-current={current(link.href) ? "page" : undefined}
+      >
+        {#if link.href === "/me" && auth.user}
+          <Avatar name={auth.user.name} id={auth.user.id} src={avatarUrl} size="small" />
+        {/if}
+        <span>{link.label}</span>
         {#if link.badge && requestsBadge > 0}
           <span class="badge"><span class="sr-only">{requestsBadge} {copy.nav.unreadRequests}</span><span aria-hidden="true">{requestsBadge}</span></span>
         {/if}
@@ -107,6 +119,12 @@
   .top-bar nav a[aria-current="page"] {
     background: var(--paper-dark);
     color: var(--brick-dark);
+  }
+
+  .top-bar nav .profile-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
   }
 
   .top-bar nav .join-link {
