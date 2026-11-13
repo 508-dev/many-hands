@@ -1,0 +1,105 @@
+/**
+ * User-facing wording for the requests inbox, contact reveal and thank-you
+ * flow. Feature copy lives here so this branch never touches copy.ts.
+ */
+export const requestsCopy = {
+  title: "Requests",
+  intro: "Messages from neighbours about helping out. Accept, decline, or follow along.",
+  boardLabel: "Requests in this view",
+  loading: "Loading your requests…",
+  error: "We could not load your requests. Check your connection and try again.",
+  retry: "Try again",
+  someone: "this member",
+  tabsLabel: "Request views",
+  tabs: {
+    inbox: "For you",
+    sent: "Sent",
+    active: "Active",
+    past: "Past",
+  },
+  context: {
+    askSkillMine: "About your skill “{title}”",
+    askSkillTheirs: "About {name}'s skill “{title}”",
+    askMine: "Asking you for a hand",
+    askTheirs: "You asked for a hand",
+    offerNeedMine: "Offering help with your need “{title}”",
+    offerNeedTheirs: "Offering help with {name}'s need “{title}”",
+    offerPlain: "Offering a hand",
+  },
+  status: {
+    waitingOnYou: "Waiting on you",
+    waitingReply: "Waiting for a reply",
+    accepted: "Accepted",
+    declined: "Declined",
+    withdrawn: "Withdrawn",
+    done: "Done",
+  },
+  actions: {
+    accept: "Accept",
+    decline: "Decline",
+    declineConfirm: "Decline this request from {name}?",
+    declineYes: "Yes, decline",
+    declineNo: "Keep it",
+    withdraw: "Withdraw",
+    markDone: "Mark as done",
+    sayThanks: "Say thanks",
+    thankedNote: "You thanked {name}.",
+    error: "That did not work. Please try again.",
+  },
+  contact: {
+    heading: "Contact details",
+    visibility: "Only you and {name} can see this.",
+    noteLabel: "Note",
+    copy: "Copy",
+    copied: "Copied!",
+    copyError: "Could not copy. Press and hold the details to copy them instead.",
+    missing: "Contact details are not available yet.",
+    nudgeIntro: "Reach out and make a plan. Meeting someone new? ",
+    nudgeLink: "Meet somewhere public first",
+    methods: {
+      email: "Email",
+      phone: "Phone",
+      whatsapp: "WhatsApp",
+      signal: "Signal",
+      telegram: "Telegram",
+      other: "Other",
+    },
+    linkLabels: {
+      email: "Email",
+      call: "Call",
+      text: "Text",
+      whatsapp: "WhatsApp",
+      signal: "Signal",
+      telegram: "Telegram",
+    },
+  },
+  thanks: {
+    title: "Say thanks",
+    label: "Your thank-you",
+    placeholder: "You made moving day so much easier — thank you!",
+    hint: "Between 2 and 300 characters. It will be public on {name}'s profile.",
+    tooShort: "Please write at least 2 characters.",
+    tooLong: "Please keep it to 300 characters or fewer.",
+    submit: "Post thank-you",
+    cancel: "Not now",
+    success: "Your thank-you is now on {name}'s profile.",
+    done: "Done",
+    error: "That did not work. Please try again.",
+  },
+  empty: {
+    inboxTitle: "No requests yet",
+    inboxText: "Find someone on the Skills board and ask for a hand.",
+    sentTitle: "Nothing sent yet",
+    sentText: "Ask for help from a skill card, or offer a hand on a need, and it shows up here.",
+    activeTitle: "No active requests",
+    activeText: "When a request is accepted, the details appear here.",
+    pastTitle: "Nothing here yet",
+    pastText: "Finished, declined, and withdrawn requests gather here.",
+    browseSkills: "Browse skills",
+  },
+} as const;
+
+/** Fill `{name}`-style placeholders in a copy template. */
+export function fill(template: string, values: Record<string, string>): string {
+  return template.replaceAll(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
+}
