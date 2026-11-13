@@ -12,13 +12,13 @@ onRecordCreateRequest((e) => {
   const body = e.requestInfo().body;
 
   // Honeypot: a real user never submits `website`.
-  const website = body["website"];
+  const website = body.website;
   if (website !== undefined && website !== null && website !== "") {
     throw new BadRequestError("Invalid registration.", {});
   }
 
   // Default `taking_requests` to true unless the client supplied it.
-  const taking = body["taking_requests"];
+  const taking = body.taking_requests;
   if (taking === undefined || taking === null) {
     e.record.set("taking_requests", true);
   }
