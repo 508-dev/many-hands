@@ -54,10 +54,12 @@
 <nav class="bottom-bar" aria-label={copy.nav.mobile}>
   {#each links as link (link.href)}
     <a href={link.href} aria-current={current(link.href) ? "page" : undefined}>
-      <span>{link.label}</span>
-      {#if link.badge && requestsBadge > 0}
-        <span class="badge"><span class="sr-only">{requestsBadge} {copy.nav.unreadRequests}</span><span aria-hidden="true">{requestsBadge}</span></span>
-      {/if}
+      <span class="tab-label">
+        {link.label}
+        {#if link.badge && requestsBadge > 0}
+          <span class="badge"><span class="sr-only">{requestsBadge} {copy.nav.unreadRequests}</span><span aria-hidden="true">{requestsBadge}</span></span>
+        {/if}
+      </span>
     </a>
   {/each}
 </nav>
@@ -177,11 +179,20 @@
     font-size: 0.7rem;
   }
 
+  /* Pin the badge to the label's top-right corner so it never covers the word. */
+  .bottom-bar .tab-label {
+    position: relative;
+    display: inline-block;
+  }
+
   .bottom-bar .badge {
     position: absolute;
-    top: 0.15rem;
-    left: calc(50% + 0.7rem);
+    top: -0.65rem;
+    left: calc(100% + 0.1rem);
+    min-width: 1.1rem;
+    height: 1.1rem;
     margin: 0;
+    font-size: 0.65rem;
   }
 
   @media (min-width: 760px) {
