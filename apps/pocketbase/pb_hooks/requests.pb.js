@@ -27,14 +27,7 @@ onRecordUpdateRequest((e) => {
   const snapshot = (userId) => {
     // One contacts record per member (unique index on `user`). If the member
     // has not set one yet, fall back to their account email.
-    const contacts = $app.findRecordsByFilter(
-      "contacts",
-      "user = {:u}",
-      "",
-      1,
-      0,
-      { u: userId },
-    );
+    const contacts = $app.findRecordsByFilter("contacts", "user = {:u}", "", 1, 0, { u: userId });
 
     if (contacts && contacts.length > 0) {
       const c = contacts[0];

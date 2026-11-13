@@ -259,10 +259,7 @@ async function main() {
       query: { perPage: "50" },
     });
     const contactItems = contacts.data?.items ?? [];
-    check(
-      contacts.ok && contactItems.length === 0,
-      "guest cannot list any contacts (empty list)",
-    );
+    check(contacts.ok && contactItems.length === 0, "guest cannot list any contacts (empty list)");
 
     const reports = await req("GET", "/api/collections/reports/records", {});
     check(!reports.ok, `guest cannot list reports (${reports.status})`);
@@ -427,14 +424,23 @@ async function main() {
     });
     const dn = await req("POST", "/api/collections/needs/records", {
       token: daveTok,
-      json: { user: dave.id, title: "Need a lift", category: "moving", mode: "in_person", status: "open" },
+      json: {
+        user: dave.id,
+        title: "Need a lift",
+        category: "moving",
+        mode: "in_person",
+        status: "open",
+      },
     });
     check(ds.ok && dn.ok, "dave posts a skill and a need");
 
     const before = await req("GET", "/api/collections/users/records", {
       query: { perPage: "50" },
     });
-    check((before.data?.items ?? []).some((u: any) => u.id === dave.id), "dave is listed before suspension");
+    check(
+      (before.data?.items ?? []).some((u: any) => u.id === dave.id),
+      "dave is listed before suspension",
+    );
 
     const suspend = await req("PATCH", `/api/collections/users/records/${dave.id}`, {
       token: superToken,
@@ -450,7 +456,10 @@ async function main() {
     const after = await req("GET", "/api/collections/users/records", {
       query: { perPage: "50" },
     });
-    check(!(after.data?.items ?? []).some((u: any) => u.id === dave.id), "a suspended member vanishes from the users list");
+    check(
+      !(after.data?.items ?? []).some((u: any) => u.id === dave.id),
+      "a suspended member vanishes from the users list",
+    );
 
     const skills = await req("GET", "/api/collections/skills/records", {
       query: { perPage: "50" },
@@ -489,7 +498,10 @@ async function main() {
     check(r.ok && !!r.data?.id, "alice (seeker) asks bob (helper)");
     req1 = r.data;
     check(req1.status === "pending", "new request is pending");
-    check(req1.seeker_contact === null && req1.helper_contact === null, "contact snapshots are empty on create");
+    check(
+      req1.seeker_contact === null && req1.helper_contact === null,
+      "contact snapshots are empty on create",
+    );
   }
 
   {
@@ -534,7 +546,10 @@ async function main() {
     const sc = r.data?.seeker_contact;
     const hc = r.data?.helper_contact;
     check(
-      sc && sc.method === "email" && sc.value === "alice@example.com" && sc.note === "Evenings best",
+      sc &&
+        sc.method === "email" &&
+        sc.value === "alice@example.com" &&
+        sc.note === "Evenings best",
       "accepted request snapshots the seeker's contact",
     );
     check(
@@ -547,12 +562,17 @@ async function main() {
     // Both participants can read the request and see the snapshots; a third
     // member sees nothing.
     const a = await req("GET", `/api/collections/requests/records/${req1.id}`, { token: aliceTok });
-    check(a.ok && a.data?.seeker_contact?.value === "alice@example.com", "seeker sees the snapshots");
+    check(
+      a.ok && a.data?.seeker_contact?.value === "alice@example.com",
+      "seeker sees the snapshots",
+    );
 
     const b = await req("GET", `/api/collections/requests/records/${req1.id}`, { token: bobTok });
     check(b.ok && b.data?.helper_contact?.value === "+15551234", "helper sees the snapshots");
 
-    const c = await req("GET", `/api/collections/requests/records/${req1.id}`, { token: charlieTok });
+    const c = await req("GET", `/api/collections/requests/records/${req1.id}`, {
+      token: charlieTok,
+    });
     check(!c.ok, `a third member cannot read the request (${c.status})`);
 
     const g = await req("GET", `/api/collections/requests/records/${req1.id}`, {});
@@ -630,7 +650,13 @@ async function main() {
     });
     const r = await req("POST", "/api/collections/requests/records", {
       token: aliceTok,
-      json: { kind: "ask", seeker: alice.id, helper: bob.id, message: "to a closed door", status: "pending" },
+      json: {
+        kind: "ask",
+        seeker: alice.id,
+        helper: bob.id,
+        message: "to a closed door",
+        status: "pending",
+      },
     });
     check(!r.ok, `asking someone with taking_requests=false is rejected (${r.status})`);
     await req("PATCH", `/api/collections/users/records/${bob.id}`, {
@@ -801,11 +827,7 @@ async function main() {
     check(!bad.ok, `a non-image avatar is rejected (${bad.status})`);
   }
 
-  console.log(
-    failures === 0
-      ? "\nAll assertions passed."
-      : `\n${failures} assertion(s) failed.`,
-  );
+  console.log(failures === 0 ? "\nAll assertions passed." : `\n${failures} assertion(s) failed.`);
   process.exit(failures === 0 ? 0 : 1);
 }
 

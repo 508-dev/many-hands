@@ -32,7 +32,8 @@ migrate(
       listRule: "user.suspended = false",
       viewRule: "user.suspended = false",
       createRule: '@request.auth.id != "" && @request.body.user = @request.auth.id',
-      updateRule: "user = @request.auth.id && (@request.body.user:isset = false || @request.body.user = @request.auth.id)",
+      updateRule:
+        "user = @request.auth.id && (@request.body.user:isset = false || @request.body.user = @request.auth.id)",
       deleteRule: "user = @request.auth.id",
       fields: [
         {

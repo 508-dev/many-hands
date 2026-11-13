@@ -87,13 +87,7 @@ migrate(
     const avatar = users.fields.getByName("avatar");
     avatar.maxSelect = 1;
     avatar.maxSize = 0;
-    avatar.mimeTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/svg+xml",
-      "image/gif",
-      "image/webp",
-    ];
+    avatar.mimeTypes = ["image/jpeg", "image/png", "image/svg+xml", "image/gif", "image/webp"];
     avatar.thumbs = [];
 
     // restore default rules

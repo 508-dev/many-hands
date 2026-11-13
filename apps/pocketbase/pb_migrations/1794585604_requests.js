@@ -75,8 +75,10 @@ migrate(
     const requests = new Collection({
       type: "base",
       name: "requests",
-      listRule: '@request.auth.id != "" && (seeker = @request.auth.id || helper = @request.auth.id)',
-      viewRule: '@request.auth.id != "" && (seeker = @request.auth.id || helper = @request.auth.id)',
+      listRule:
+        '@request.auth.id != "" && (seeker = @request.auth.id || helper = @request.auth.id)',
+      viewRule:
+        '@request.auth.id != "" && (seeker = @request.auth.id || helper = @request.auth.id)',
       createRule,
       updateRule,
       deleteRule: null, // superusers only
